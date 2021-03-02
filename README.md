@@ -1,4 +1,10 @@
-[![arduino-library-badge](https://www.ardu-badge.com/badge/ESP32%20BLE%20ANCS%20Notifications.svg?)](https://www.ardu-badge.com/ESP32%20BLE%20ANCS%20Notifications/)
+This is a modification of the Smartphone-Companions/ESP32-ANCS-Notifications library to add parralel support for AMS.
+
+It's hacky AF and shouldn't be considered production ready by any stretch. It leaks too...
+
+Below is original readme until such time I bother updating it.
+
+---
 
 # ESP32 ANCS Notifications
 Easy-to-use Arduino library for interfacing an ESP 32 with Bluetooth LE mobile device notifications.

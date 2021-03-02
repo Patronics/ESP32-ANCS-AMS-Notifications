@@ -64,9 +64,6 @@ ANCSBLEClient::~ANCSBLEClient() {
 
 void ANCSBLEClient::startClientTask(void * params) {
 	ESP_LOGD(LOG_TAG, "Starting client");
-		const BLEAddress* address = (BLEAddress*)params;
-		sharedInstance->setup(address);
-
 		ANCSNotificationQueue * queue = sharedInstance->notificationQueue;
 	    while (1)
 	    {
@@ -80,17 +77,7 @@ void ANCSBLEClient::startClientTask(void * params) {
 }
 
 
-void ANCSBLEClient::setup(const BLEAddress * address) {
-    BLEClient*  pClient  = BLEDevice::createClient();
-    BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
-    BLEDevice::setSecurityCallbacks(new NotificationSecurityCallbacks()); // @todo memory leak?
-
-    BLESecurity *pSecurity = new BLESecurity();
-    pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
-    pSecurity->setCapability(ESP_IO_CAP_IO);
-    pSecurity->setRespEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
-    // Connect to the remove BLE Server.
-    pClient->connect(*address);
+void ANCSBLEClient::setup(BLEClient * pClient) {
 
     /** BEGIN ANCS SERVICE **/
     // Obtain a reference to the service we are after in the remote BLE server.

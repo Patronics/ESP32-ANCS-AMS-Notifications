@@ -8,6 +8,7 @@
 class BLEAddress;
 class BLERemoteCharacteristic;
 class ANCSNotificationQueue;
+class BLEClient;
 
 
 #include "BLEUUID.h"
@@ -42,8 +43,8 @@ public:
 	void onDataSourceNotify(BLERemoteCharacteristic*, uint8_t*, size_t, bool);
 	void onNotificationSourceNotify(BLERemoteCharacteristic*, uint8_t*, size_t, bool);
 	
+	void setup(BLEClient*);
 private:
-	void setup(const BLEAddress*);
 	
 	/**
 	 * A notification event only contains minimal information. We need to request the extra info

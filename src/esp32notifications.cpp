@@ -21,12 +21,37 @@
 
 static char LOG_TAG[] = "BLENotifications";
 
+typedef struct {
+	BLENotifications *instance;
+	BLEAddress *address;
+} pinnedTaskClosure_t;
+
 extern const BLEUUID ancsServiceUUID;
 
 #ifndef BLE_LIB_HAS_SERVICE_SOLICITATION
 // Use a static function, instead of doing a whole private implementation just for a this one small patch.
 static void setServiceSolicitation(class BLEAdvertisementData & advertisementData, BLEUUID uuid);
 #endif
+void startClientTasks(void * params) {
+	pinnedTaskClosure_t *taskData = (pinnedTaskClosure_t *)params;
+
+	BLEClient*  pClient  = BLEDevice::createClient();
+	BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
+	BLEDevice::setSecurityCallbacks(new NotificationSecurityCallbacks()); // @todo memory leak?
+
+	BLESecurity *pSecurity = new BLESecurity();
+	pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
+	pSecurity->setCapability(ESP_IO_CAP_IO);
+	pSecurity->setRespEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
+	// Connect to the remove BLE Server.
+	pClient->connect(*taskData->address);
+	taskData->instance->clientANCS->setup(pClient);
+	taskData->instance->clientAMS->setup(pClient);
+	::xTaskCreatePinnedToCore(&ANCSBLEClient::startClientTask, "ClientTask", 10000, pClient, 5, &taskData->instance->clientANCS->clientTaskHandle, 0);
+	delete taskData->address;
+	delete taskData;
+	vTaskDelete(NULL);
+}
 
 class MyServerCallbacks: public BLEServerCallbacks {
 private:
@@ -45,10 +70,16 @@ public:
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
 		ESP_LOGI(LOG_TAG, "Device connected");
 		gatts_connect_evt_param * connectEventParam = (gatts_connect_evt_param *) param;
-	    ::xTaskCreatePinnedToCore(&ANCSBLEClient::startClientTask, "ClientTask", 10000, new BLEAddress(connectEventParam->remote_bda), 5, &instance->client->clientTaskHandle, 0);
         instance->clientANCS = new ANCSBLEClient(); // @todo memory leaks?
 		instance->clientANCS->setNotificationArrivedCallback(instance->cbNotification, instance->cbNotificationUserData);
 		instance->clientANCS->setNotificationRemovedCallback(instance->cbRemoved, instance->cbRemovedUserData);
+
+		pinnedTaskClosure_t *taskData = new pinnedTaskClosure_t();  // @todo memory leaks?
+		BLEAddress *address = new BLEAddress(connectEventParam->remote_bda);
+		taskData->address = address;
+		taskData->instance = instance;
+
+	    ::xTaskCreatePinnedToCore(&startClientTasks, "ClientStarterTask", 10000, taskData, 5, &instance->clientANCS->clientTaskHandle, 0);
 		
 		delay(1000);
 		

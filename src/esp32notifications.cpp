@@ -99,7 +99,7 @@ const char * BLENotifications::getNotificationCategoryDescription(NotificationCa
 }
 }
 
-bool BLENotifications::begin(const char * name) {
+void BLENotifications::begin(const char * name) {
 	ESP_LOGI(LOG_TAG, "begin()");
     BLEDevice::init(name);
     server = BLEDevice::createServer();
@@ -110,7 +110,7 @@ bool BLENotifications::begin(const char * name) {
 	startAdvertising();
 }
 
-bool BLENotifications::stop() {
+void BLENotifications::stop() {
 	ESP_LOGI(LOG_TAG, "stop()");
 	BLEDevice::deinit(false);	
 }

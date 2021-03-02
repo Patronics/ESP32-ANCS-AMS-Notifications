@@ -36,7 +36,7 @@ class BLENotifications {
          * Will also automatically start advertising.
          * @param name the device name, as it will appear in a BLE scan.
          */
-        bool begin(const char * name);
+        void begin(const char * name);
         
         /**
          * Make this device visible in scans as available for connection.
@@ -50,7 +50,7 @@ class BLENotifications {
          * cannot be used after a stop.
          * 
          */
-        bool stop();
+        void stop();
         
         /**
          * Set this to a callback for when the BLE connects or disconnects.

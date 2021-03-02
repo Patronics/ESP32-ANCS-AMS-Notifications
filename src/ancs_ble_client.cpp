@@ -204,8 +204,7 @@ void ANCSBLEClient::onDataSourceNotify(
       if (!notification->title.empty() && !notification->message.empty()) {
 		if (notificationCB && notification->isComplete == false) {
 			ESP_LOGI(LOG_TAG, "got a full notification: %s - %s ", notification->title.c_str(), notification->message.c_str());
-			const ArduinoNotification arduinoNotification = ArduinoNotification(*notification);
-			notificationCB(&arduinoNotification, notification);
+			notificationCB(notification);
 		}
 		notification->isComplete = true;
       }
@@ -240,8 +239,7 @@ void ANCSBLEClient::onNotificationSourceNotify(
 	    }
 		
 		if (removedCB) {
-			const ArduinoNotification arduinoNotification = ArduinoNotification(*notification);
-			removedCB(&arduinoNotification, notification);
+			removedCB(notification);
 		}
 	}
 	else if (pData[0] == ANCS::EventIDNotificationAdded) {

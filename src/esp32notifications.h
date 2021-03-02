@@ -71,21 +71,21 @@ class BLENotifications {
         */
         const char * getNotificationCategoryDescription(NotificationCategory category) const;
 
+        class ANCSBLEClient* clientANCS = nullptr;
 	private:
 
         
     private:
-        ble_notifications_state_changed_t cbStateChanged;
-        const void *cbStateChangedUserData;
-        ble_notification_arrived_t cbNotification;
-        const void *cbNotificationUserData;
-        ble_notification_removed_t cbRemoved;
-        const void *cbRemovedUserData;
+        ble_notifications_state_changed_t cbStateChanged = nullptr;
+        const void *cbStateChangedUserData = nullptr;
+        ble_notification_arrived_t cbNotification = nullptr;
+        const void *cbNotificationUserData = nullptr;
+        ble_notification_removed_t cbRemoved = nullptr;
+        const void *cbRemovedUserData = nullptr;
         
         class BLEServer* server;
-        class ANCSBLEClient* client;
         
-        bool isAdvertising;
+        bool isAdvertising = false;
         
         friend class MyServerCallbacks; //Allow internal handlers to access the callbacks of the main class
 };

@@ -45,11 +45,10 @@ public:
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
 		ESP_LOGI(LOG_TAG, "Device connected");
 		gatts_connect_evt_param * connectEventParam = (gatts_connect_evt_param *) param;
-        instance->client = new ANCSBLEClient(); // @todo memory leaks?
-		instance->client->setNotificationArrivedCallback(instance->cbNotification);
-		instance->client->setNotificationRemovedCallback(instance->cbRemoved);
-		//instance->client->setStackSize(50000);
 	    ::xTaskCreatePinnedToCore(&ANCSBLEClient::startClientTask, "ClientTask", 10000, new BLEAddress(connectEventParam->remote_bda), 5, &instance->client->clientTaskHandle, 0);
+        instance->clientANCS = new ANCSBLEClient(); // @todo memory leaks?
+		instance->clientANCS->setNotificationArrivedCallback(instance->cbNotification, instance->cbNotificationUserData);
+		instance->clientANCS->setNotificationRemovedCallback(instance->cbRemoved, instance->cbRemovedUserData);
 		
 		delay(1000);
 		
@@ -61,24 +60,19 @@ public:
     };
 
 	void onDisconnect(BLEServer* pServer) {
-		  ::vTaskDelete(instance->client->clientTaskHandle);
-		  instance->client->clientTaskHandle = nullptr;
+		  ::vTaskDelete(instance->clientANCS->clientTaskHandle);
+		  instance->clientANCS->clientTaskHandle = nullptr;
 			ESP_LOGI(LOG_TAG, "Device disconnected");
 	        if (instance->cbStateChanged) {
 	        	instance->cbStateChanged(BLENotifications::StateDisconnected, instance->cbStateChangedUserData);
 	        }
-			delete instance->client;
-			instance->client = nullptr;
+			delete instance->clientANCS;
+			instance->clientANCS = nullptr;
 	    }
 };
 
 
-BLENotifications::BLENotifications()
-	 : cbStateChanged(nullptr)
-	 , client(nullptr)
-	 , isAdvertising(false)
-{
-	
+BLENotifications::BLENotifications() {
 }
 
 const char * BLENotifications::getNotificationCategoryDescription(NotificationCategory category) const {
@@ -134,13 +128,13 @@ void BLENotifications::setRemovedCallback(ble_notification_removed_t callback, c
 
 void BLENotifications::actionPositive(uint32_t uuid) {
 	ESP_LOGI(LOG_TAG, "actionPositive()");
-	client->performAction(uuid, uint8_t(ANCS::NotificationActionPositive));
+	clientANCS->performAction(uuid, uint8_t(ANCS::NotificationActionPositive));
 }
 
 
 void BLENotifications::actionNegative(uint32_t uuid) {
 	ESP_LOGI(LOG_TAG, "actionNegative()");
-	client->performAction(uuid, uint8_t(ANCS::NotificationActionNegative));
+	clientANCS->performAction(uuid, uint8_t(ANCS::NotificationActionNegative));
 }
 
 void BLENotifications::startAdvertising() {

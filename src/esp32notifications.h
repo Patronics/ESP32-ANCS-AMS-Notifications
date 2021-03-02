@@ -25,7 +25,7 @@ class BLENotifications {
          * Callback for a state change of the BLE connection.
          * Use this to modify the UI to notify the user if a connection is available.
          */
-        typedef void (*ble_notifications_state_changed_t)(State state);
+        typedef void (*ble_notifications_state_changed_t)(State state, const void *userData);
 
 
     public:
@@ -55,13 +55,13 @@ class BLENotifications {
         /**
          * Set this to a callback for when the BLE connects or disconnects.
          */
-        void setConnectionStateChangedCallback(ble_notifications_state_changed_t);
+        void setConnectionStateChangedCallback(ble_notifications_state_changed_t, const void *userData = nullptr);
         
         /**
          * Set this to a callback for when a notification arrives.
          */
-        void setNotificationCallback(ble_notification_arrived_t);
-        void setRemovedCallback(ble_notification_removed_t);
+        void setNotificationCallback(ble_notification_arrived_t, const void *userData = nullptr);
+        void setRemovedCallback(ble_notification_removed_t, const void *userData = nullptr);
 
         void actionPositive(uint32_t uuid);
         void actionNegative(uint32_t uuid);
@@ -76,8 +76,11 @@ class BLENotifications {
         
     private:
         ble_notifications_state_changed_t cbStateChanged;
+        const void *cbStateChangedUserData;
         ble_notification_arrived_t cbNotification;
+        const void *cbNotificationUserData;
         ble_notification_removed_t cbRemoved;
+        const void *cbRemovedUserData;
         
         class BLEServer* server;
         class ANCSBLEClient* client;

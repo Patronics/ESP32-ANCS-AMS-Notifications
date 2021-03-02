@@ -96,13 +96,13 @@ struct Notification {
  * Callback for when a notification arrives.
  * @param notification The notification that just arrived.
  */
-typedef void (*ble_notification_arrived_t)(const Notification * rawNotificationData);
+typedef void (*ble_notification_arrived_t)(const Notification * rawNotificationData, const void *userData);
 
 /**
  * Callback for when a notification was removed.
  * @param notification The notification that was removed.
  */
-typedef void (*ble_notification_removed_t)(const Notification * rawNotificationData);
+typedef void (*ble_notification_removed_t)(const Notification * rawNotificationData, const void *userData);
 
 
 

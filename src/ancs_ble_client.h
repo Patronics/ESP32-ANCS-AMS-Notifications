@@ -23,8 +23,8 @@ public:
     */
 	ANCSBLEClient();
 	virtual ~ANCSBLEClient();
-	void setNotificationArrivedCallback(ble_notification_arrived_t cbNotification);
-	void setNotificationRemovedCallback(ble_notification_removed_t cbNotification);
+	void setNotificationArrivedCallback(ble_notification_arrived_t cbNotification, const void *userData = nullptr);
+	void setNotificationRemovedCallback(ble_notification_removed_t cbNotification, const void *userData = nullptr);
 
 	void performAction(uint32_t notifyUUID, uint8_t actionID);
 
@@ -60,7 +60,9 @@ private:
 	ANCSNotificationQueue * notificationQueue;
 	
 	ble_notification_arrived_t notificationCB;
+	const void *notificationCBUserData;
 	ble_notification_removed_t removedCB;
+	const void *removedCBUserData;
 	
 	class BLERemoteCharacteristic* pControlPointCharacteristic;
 };

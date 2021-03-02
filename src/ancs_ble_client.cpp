@@ -130,13 +130,15 @@ BLEUUID ANCSBLEClient::getAncsServiceUUID() {
 }
 
 
-void ANCSBLEClient::setNotificationArrivedCallback(ble_notification_arrived_t cbNotification) {
+void ANCSBLEClient::setNotificationArrivedCallback(ble_notification_arrived_t cbNotification, const void *userData) {
 	notificationCB = cbNotification;
+	notificationCBUserData = userData;
 }
 
 
-void ANCSBLEClient::setNotificationRemovedCallback(ble_notification_removed_t cbNotification) {
+void ANCSBLEClient::setNotificationRemovedCallback(ble_notification_removed_t cbNotification, const void *userData) {
 	removedCB = cbNotification;
+	removedCBUserData = userData;
 }
 
 
@@ -204,7 +206,7 @@ void ANCSBLEClient::onDataSourceNotify(
       if (!notification->title.empty() && !notification->message.empty()) {
 		if (notificationCB && notification->isComplete == false) {
 			ESP_LOGI(LOG_TAG, "got a full notification: %s - %s ", notification->title.c_str(), notification->message.c_str());
-			notificationCB(notification);
+			notificationCB(notification, notificationCBUserData);
 		}
 		notification->isComplete = true;
       }
@@ -239,7 +241,7 @@ void ANCSBLEClient::onNotificationSourceNotify(
 	    }
 		
 		if (removedCB) {
-			removedCB(notification);
+			removedCB(notification, removedCBUserData);
 		}
 	}
 	else if (pData[0] == ANCS::EventIDNotificationAdded) {

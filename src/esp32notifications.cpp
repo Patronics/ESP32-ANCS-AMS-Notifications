@@ -56,7 +56,7 @@ public:
 		ESP_LOGI(LOG_TAG, "Set up client");
 		
         if (instance->cbStateChanged) {
-        	instance->cbStateChanged(BLENotifications::StateConnected);
+        	instance->cbStateChanged(BLENotifications::StateConnected, instance->cbStateChangedUserData);
         }
     };
 
@@ -65,7 +65,7 @@ public:
 		  instance->client->clientTaskHandle = nullptr;
 			ESP_LOGI(LOG_TAG, "Device disconnected");
 	        if (instance->cbStateChanged) {
-	        	instance->cbStateChanged(BLENotifications::StateDisconnected);
+	        	instance->cbStateChanged(BLENotifications::StateDisconnected, instance->cbStateChangedUserData);
 	        }
 			delete instance->client;
 			instance->client = nullptr;
@@ -116,17 +116,20 @@ void BLENotifications::stop() {
 }
 
 
-void BLENotifications::setConnectionStateChangedCallback(ble_notifications_state_changed_t callback) {
+void BLENotifications::setConnectionStateChangedCallback(ble_notifications_state_changed_t callback, const void *userData) {
 	cbStateChanged = callback;
+	cbStateChangedUserData = userData;
 }
 
 
-void BLENotifications::setNotificationCallback(ble_notification_arrived_t callback) {
+void BLENotifications::setNotificationCallback(ble_notification_arrived_t callback, const void *userData) {
 	cbNotification = callback;
+	cbNotificationUserData = userData;
 }
 
-void BLENotifications::setRemovedCallback(ble_notification_removed_t callback) {
+void BLENotifications::setRemovedCallback(ble_notification_removed_t callback, const void *userData) {
 	cbRemoved = callback;	
+	cbRemovedUserData = userData;
 }
 
 void BLENotifications::actionPositive(uint32_t uuid) {

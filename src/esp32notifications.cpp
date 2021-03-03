@@ -8,6 +8,7 @@
 
 #include "esp32notifications.h"
 #include "ancs_ble_client.h"
+#include "ams_ble_client.h"
 #include "ble_security.h"
 
 #include "BLEAddress.h"
@@ -66,6 +67,7 @@ public:
 	MyServerCallbacks(BLENotifications * parent)
 	 	: instance(parent) {
         instance->clientANCS = new ANCSBLEClient(); // @todo memory leaks?
+		instance->clientAMS = new AMSBLEClient(); // @todo memory leaks?
 	}
 	
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
@@ -158,10 +160,14 @@ void BLENotifications::actionPositive(uint32_t uuid) {
 	clientANCS->performAction(uuid, uint8_t(ANCS::NotificationActionPositive));
 }
 
-
 void BLENotifications::actionNegative(uint32_t uuid) {
 	ESP_LOGI(LOG_TAG, "actionNegative()");
 	clientANCS->performAction(uuid, uint8_t(ANCS::NotificationActionNegative));
+}
+
+void BLENotifications::amsCommand(AMSRemoteCommandID_t cmd) {
+	if (clientAMS)
+		clientAMS->performCommand(cmd);
 }
 
 void BLENotifications::startAdvertising() {

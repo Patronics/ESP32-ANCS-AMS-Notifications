@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #include "ble_notification.h"
+#include "ams_ble_client.h"
 
 /**
  * Arduino library for the ESP32, for receiving BLE notifications from another device.
@@ -63,17 +64,20 @@ class BLENotifications {
         void setNotificationCallback(ble_notification_arrived_t, const void *userData = nullptr);
         void setRemovedCallback(ble_notification_removed_t, const void *userData = nullptr);
 
+        void setOnAMSTrackUpdateCB(ams_track_updated_t cb, const void *userData = nullptr)   { if (clientAMS) clientAMS->setOnTrackUpdateCB(cb); };
+        void setOnAMSPlayerUpdateCB(ams_player_updated_t cb, const void *userData = nullptr) { if (clientAMS) clientAMS->setOnPlayerUpdateCB(cb); };
+
         void actionPositive(uint32_t uuid);
         void actionNegative(uint32_t uuid);
     
+        void amsCommand(AMSRemoteCommandID_t cmd);
         /** 
          * Given a category, return a description of the category in English
         */
         const char * getNotificationCategoryDescription(NotificationCategory category) const;
 
         class ANCSBLEClient* clientANCS = nullptr;
-	private:
-
+        class AMSBLEClient* clientAMS = nullptr;
         
     private:
         ble_notifications_state_changed_t cbStateChanged = nullptr;

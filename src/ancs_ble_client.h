@@ -10,7 +10,6 @@ class BLERemoteCharacteristic;
 class ANCSNotificationQueue;
 class BLEClient;
 
-
 #include "BLEUUID.h"
 
 /**

@@ -22,7 +22,6 @@ const BLEUUID controlPointCharacteristicUUID("69D1D8F3-45E1-49A8-9821-9BBDFDAAD9
 const BLEUUID dataSourceCharacteristicUUID("22EAC6E9-24D6-4BB5-BE44-B36ACE7C7BFB");
 const BLEUUID ancsServiceUUID("7905F431-B5CE-4E99-A40F-4B1E122D00D0");
 
-
 static ANCSBLEClient * sharedInstance;
 
 static void dataSourceNotifyCallback(
@@ -33,7 +32,6 @@ static void dataSourceNotifyCallback(
 	 ESP_LOGD(LOG_TAG, "dataSourceNotifyCallback");
 	sharedInstance->onDataSourceNotify(pDataSourceCharacteristic, pData, length, isNotify);
 }
-
 
 static void notificationSourceNotifyCallback(
   BLERemoteCharacteristic* pNotificationSourceCharacteristic,
@@ -46,7 +44,6 @@ static void notificationSourceNotifyCallback(
 	sharedInstance->onNotificationSourceNotify(pNotificationSourceCharacteristic, pData, length, isNotify);
 }
 
-
 ANCSBLEClient::ANCSBLEClient()
 	: notificationCB(nullptr)
 	, removedCB(nullptr)
@@ -56,7 +53,6 @@ ANCSBLEClient::ANCSBLEClient()
 	sharedInstance = this;  
 	notificationQueue = new ANCSNotificationQueue();
 }
-
 
 ANCSBLEClient::~ANCSBLEClient() {
 	sharedInstance = nullptr;
@@ -76,9 +72,7 @@ void ANCSBLEClient::startClientTask(void * params) {
 	    }
 }
 
-
 void ANCSBLEClient::setup(BLEClient * pClient) {
-
     /** BEGIN ANCS SERVICE **/
     // Obtain a reference to the service we are after in the remote BLE server.
     BLERemoteService* pAncsService = pClient->getService(ancsServiceUUID);

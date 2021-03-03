@@ -140,12 +140,10 @@ void BLENotifications::stop() {
 	BLEDevice::deinit(false);	
 }
 
-
 void BLENotifications::setConnectionStateChangedCallback(ble_notifications_state_changed_t callback, const void *userData) {
 	cbStateChanged = callback;
 	cbStateChangedUserData = userData;
 }
-
 
 void BLENotifications::setNotificationCallback(ble_notification_arrived_t callback, const void *userData) {
 	clientANCS->setNotificationArrivedCallback(callback, userData);

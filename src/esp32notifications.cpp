@@ -65,14 +65,12 @@ public:
 	
 	MyServerCallbacks(BLENotifications * parent)
 	 	: instance(parent) {
+        instance->clientANCS = new ANCSBLEClient(); // @todo memory leaks?
 	}
 	
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
 		ESP_LOGI(LOG_TAG, "Device connected");
 		gatts_connect_evt_param * connectEventParam = (gatts_connect_evt_param *) param;
-        instance->clientANCS = new ANCSBLEClient(); // @todo memory leaks?
-		instance->clientANCS->setNotificationArrivedCallback(instance->cbNotification, instance->cbNotificationUserData);
-		instance->clientANCS->setNotificationRemovedCallback(instance->cbRemoved, instance->cbRemovedUserData);
 
 		pinnedTaskClosure_t *taskData = new pinnedTaskClosure_t();  // @todo memory leaks?
 		BLEAddress *address = new BLEAddress(connectEventParam->remote_bda);
@@ -148,13 +146,11 @@ void BLENotifications::setConnectionStateChangedCallback(ble_notifications_state
 
 
 void BLENotifications::setNotificationCallback(ble_notification_arrived_t callback, const void *userData) {
-	cbNotification = callback;
-	cbNotificationUserData = userData;
+	clientANCS->setNotificationArrivedCallback(callback, userData);
 }
 
 void BLENotifications::setRemovedCallback(ble_notification_removed_t callback, const void *userData) {
-	cbRemoved = callback;	
-	cbRemovedUserData = userData;
+	clientANCS->setNotificationRemovedCallback(callback, userData);
 }
 
 void BLENotifications::actionPositive(uint32_t uuid) {

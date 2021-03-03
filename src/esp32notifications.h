@@ -78,10 +78,6 @@ class BLENotifications {
     private:
         ble_notifications_state_changed_t cbStateChanged = nullptr;
         const void *cbStateChangedUserData = nullptr;
-        ble_notification_arrived_t cbNotification = nullptr;
-        const void *cbNotificationUserData = nullptr;
-        ble_notification_removed_t cbRemoved = nullptr;
-        const void *cbRemovedUserData = nullptr;
         
         class BLEServer* server;
         

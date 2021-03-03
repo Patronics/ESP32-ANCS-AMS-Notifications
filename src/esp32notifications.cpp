@@ -48,6 +48,7 @@ void startClientTasks(void * params) {
 	pClient->connect(*taskData->address);
 	taskData->instance->clientANCS->setup(pClient);
 	taskData->instance->clientAMS->setup(pClient);
+	taskData->instance->clientCTS->setup(pClient);
 	::xTaskCreatePinnedToCore(&ANCSBLEClient::startClientTask, "ClientTask", 10000, pClient, 5, &taskData->instance->clientANCS->clientTaskHandle, 0);
 	delete taskData->address;
 	delete taskData;
@@ -68,6 +69,7 @@ public:
 	 	: instance(parent) {
         instance->clientANCS = new ANCSBLEClient(); // @todo memory leaks?
 		instance->clientAMS = new AMSBLEClient(); // @todo memory leaks?
+		instance->clientCTS = new CTSBLEClient(); // @todo memory leaks?
 	}
 	
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {

@@ -5,6 +5,7 @@
 
 #include "ble_notification.h"
 #include "ams_ble_client.h"
+#include "cts_ble_client.h"
 
 /**
  * Arduino library for the ESP32, for receiving BLE notifications from another device.
@@ -78,6 +79,7 @@ class BLENotifications {
 
         class ANCSBLEClient* clientANCS = nullptr;
         class AMSBLEClient* clientAMS = nullptr;
+        class CTSBLEClient* clientCTS = nullptr;
         
     private:
         ble_notifications_state_changed_t cbStateChanged = nullptr;

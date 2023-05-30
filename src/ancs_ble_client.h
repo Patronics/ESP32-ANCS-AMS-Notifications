@@ -3,7 +3,8 @@
 
 #include "ble_notification.h"
 
-#include "FreeRTOS.h" // For asynchronous tasks
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 class BLEAddress;
 class BLERemoteCharacteristic;
@@ -37,7 +38,7 @@ public:
 	static void startClientTask(void *data);
 	
 public:
-	xTaskHandle clientTaskHandle;
+	TaskHandle_t clientTaskHandle;
 	
 	void onDataSourceNotify(BLERemoteCharacteristic*, uint8_t*, size_t, bool);
 	void onNotificationSourceNotify(BLERemoteCharacteristic*, uint8_t*, size_t, bool);

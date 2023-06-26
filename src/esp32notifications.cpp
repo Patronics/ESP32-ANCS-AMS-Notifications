@@ -136,14 +136,12 @@ void BLENotifications::begin(const char * name) {
 	
 	startAdvertising();
 
-	return true;
 }
 
 void BLENotifications::stop() {
 	ESP_LOGI(LOG_TAG, "stop()");
 	BLEDevice::deinit(false);	
 
-	return true;
 }
 
 void BLENotifications::setConnectionStateChangedCallback(ble_notifications_state_changed_t callback, const void *userData) {
